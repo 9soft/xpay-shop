@@ -5,6 +5,8 @@ import com.xpay.shop.constant.XPayConstants;
 import com.xpay.shop.utils.HttpClientUtil;
 import com.xpay.shop.utils.HttpConnectionUtil;
 import com.xpay.shop.utils.XpayUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.TreeMap;
 
 @Service("xPayService")
 public class XPayService {
+	private static final Logger log = LoggerFactory.getLogger(XPayService.class);
 	public JSONObject pay(long trxamt,String reqsn,String paytype,String body,String remark,String acct,String authcode,String notify_url,String limit_pay) throws Exception{
 		TreeMap<String,Object> params = new TreeMap<String,Object>();
 		params.put("cusid", XPayConstants.SYB_CUSID);
@@ -28,6 +31,7 @@ public class XPayService {
         params.put("limit_pay", limit_pay);
         params.put("sign", XpayUtil.sign(params, XPayConstants.SYB_APPKEY));
         String responseContent = HttpClientUtil.sendPostRequest(XPayConstants.SYB_APIURL, params);
+		log.info("--------------收到xpay返回的信息"+responseContent);
         handleResult(responseContent);
         return JSONObject.parseObject(responseContent);
 		
